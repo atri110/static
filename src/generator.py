@@ -14,7 +14,7 @@ def extract_title(markdown: str) -> str:
     return line.strip()
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
+def generate_page(from_path: str, template_path: str, dest_path: str, basepath: str) -> None:
     print((
         f"Generating page from {from_path} to "
         f"{dest_path} using {template_path}"
@@ -31,6 +31,8 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
         template_content = template_file.read()
         template_content = template_content.replace("{{ Title }}", title)
         template_content = template_content.replace("{{ Content }}", markdown_html)
+        template_content = template_content.replace('href="/', f'href="{basepath}')
+        template_content = template_content.replace('src="/', f'src="{basepath}')
 
         path_dir = os.path.dirname(dest_path)
         if path_dir:
@@ -50,7 +52,8 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
 def generate_pages_recursive(
     src_path: str,
     template_path: str,
-    dest_path: str
+    dest_path: str,
+    basepath: str
 ) -> None:
     dir_list = os.listdir(src_path)
     for item in dir_list:
@@ -61,9 +64,10 @@ def generate_pages_recursive(
             generate_pages_recursive(
                 full_src_path,
                 template_path,
-                full_dest_path
+                full_dest_path,
+                basepath
             )
         else:
             full_dest_path = Path(full_dest_path).with_suffix(".html")
             print(f"Generating html file for path: {full_dest_path}")
-            generate_page(full_src_path, template_path, full_dest_path)
+            generate_page(full_src_path, template_path, full_dest_path, basepath)

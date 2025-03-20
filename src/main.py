@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 from generator import generate_pages_recursive
 
@@ -40,11 +41,11 @@ def sync_replace_files_in_dict(
 
 
 def main():
-    sync_replace_files_in_dict("./static", "./public")
-    # to_generates_list = [
-    #     ("./content/index.md", )
-    # ]
-    generate_pages_recursive("./content", "./template.html", "./public")
+    basepath = "/"
+    if len(sys.argv) == 2:
+        basepath = sys.argv[1]
+    sync_replace_files_in_dict("./static", "./docs")
+    generate_pages_recursive("./content", "./template.html", "./docs", basepath)
 
 
 if __name__ == "__main__":
